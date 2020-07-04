@@ -101,6 +101,7 @@ def create_db():
                 id SERIAL PRIMARY KEY ,
                 from_id INT REFERENCES Users(id),
                 to_id INT REFERENCES Users(id),
+                text TEXT,
                 creation_date TIMESTAMP 
             )
         """
