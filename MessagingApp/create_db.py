@@ -10,8 +10,9 @@ DEFAULT_DBNAME = "messaging_app_db"
 
 def create_db():
     """
+    Logs as specified user (console args) and creates a database.
 
-    :return: True if succesfully added
+    :return: True if succesfully added or database already present, false otherwise
     """
     # parse arguments
     arg_parser = argparse.ArgumentParser()
