@@ -48,6 +48,7 @@ def create_db():
         connection.autocommit = True
         cur = connection.cursor()
         # attempt to create a database
+        print(f'Creating {new_dbname} database.')
         sql = f"CREATE DATABASE {new_dbname}"
         cur.execute(sql)
     except Exception as e:
