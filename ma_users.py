@@ -13,7 +13,6 @@ def get_not_none_args(args):
     return not_none_args_dict
 
 
-
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-u', '--username', help="Username for user that is to be created or modified.")
@@ -32,7 +31,7 @@ def connect_to_database():
     try:
         # create a connection to create the database itself
         print(f'Connecting to {DEFAULT_NEW_DBNAME}...')
-        connection = connect(user=DEFAULT_USER, host=DEFAULT_HOST, password=DEFAULT_PWD)
+        connection = connect(user=DEFAULT_USER, host=DEFAULT_HOST, password=DEFAULT_PWD, dbname=DEFAULT_NEW_DBNAME)
         connection.autocommit = True
     except Exception as e:
             print('Error', e.pgcode, ":", e)
@@ -42,16 +41,20 @@ def connect_to_database():
 
 
 def create_user(connection, username, password):
-    user = User.load_user_by_username()
-    if user:
-        print(f"User {username} already exists! Failed to add a new user.")
-        return False
-    else:
+    if connection:
+        cur = connection.cursor()
+        user = User.load_user_by_username(cur, username)
+        if user:
+            print(f"User {username} already exists! Failed to add a new user.")
+            return False
         if len(password) < 8:
             print(f'Password too short. Failed to add a new user.')
-        else:
+            return False
 
-            connection.cursor()
+        new_user = User(username, password)
+        return new_user.save_to_db(cur)
+
+
 
 
 def edit_user(connection, username, password, new_password):
@@ -67,17 +70,22 @@ def list_all_users(connection):
 
 
 def process_args(args):
+
+    connection = connect_to_database()
+
     if args['username'] and args['password'] and len(args) == 2:
-        return create_user(args['username'], args['password'])
+        if create_user(connection, args['username'], args['password']):
+            print(f"{args['username']} added successfully.")
 
     if args['username'] and args['password'] and args['edit'] and args['new_pass'] and len(args) == 4:
-        return edit_user(args['username'], args['password'], args['new_pass'])
-
-    if args['username'] and args['password'] and args['delete'] and len(args) == 3:
-        return delete_user(args['username'], args['password'])
-
-    if args['list'] and len(args) == 1:
-        return list_all_users()
+        if edit_user(connection, args['username'], args['password'], args['new_pass']):
+            print(f"{args['username']} updated successfully.")
+    #
+    # if args['username'] and args['password'] and args['delete'] and len(args) == 3:
+    #     return delete_user(connection, args['username'], args['password'])
+    #
+    # if args['list'] and len(args) == 1:
+    #     return list_all_users(connection)
 
 
 
