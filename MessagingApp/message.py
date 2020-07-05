@@ -59,8 +59,9 @@ class Message:
         return messages
 
     @staticmethod
-    def load_all_messages(cursor, usr_id):
-        sql = "SELECT id, from_id, to_id, creation_date, text FROM Messages WHERE from_id = %s OR to_id = %s"
+    def load_all_messages_for_user_id(cursor, usr_id):
+        sql = "SELECT id, from_id, to_id, creation_date, text FROM Messages " \
+              "WHERE from_id = %s OR to_id = %s"
         values = (usr_id, usr_id)
         cursor.execute(sql, values)
         messages = []
