@@ -10,7 +10,7 @@ def parse_args():
     parser.add_argument('-u', '--username', help="Username for user that is to be created or modified.")
     parser.add_argument('-p', '--password', help="Password for user under username.")
     parser.add_argument('-n', '--new_pass', help="New password for user under username.")
-    parser.add_argument('-l', '--list', help="List all users.")
+    parser.add_argument('-l', '--list', help="List all users.", action="store_true")
     parser.add_argument('-d', '--delete', help="Delete user under username.", action="store_true")
     parser.add_argument('-e', '--edit', help="Edit user's password.", action="store_true")
 
@@ -85,6 +85,7 @@ def list_all_users(connection):
     if connection:
         cur = connection.cursor()
         users = User.load_all_users(cur)
+
         if not users:
             print("There are no users in database.")
             return False
