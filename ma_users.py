@@ -82,7 +82,17 @@ def delete_user(connection, username, password):
 
 
 def list_all_users(connection):
-    pass
+    if connection:
+        cur = connection.cursor()
+        users = User.load_all_users(cur)
+        if not users:
+            print("There are no users in database.")
+            return False
+        else:
+            print("Users list:")
+            for user in users:
+                print(f"username: {user.username}")
+            return True
 
 
 def process_args(args):
@@ -98,9 +108,8 @@ def process_args(args):
     elif args.username and args.password:
         if create_user(connection, args.username, args.password):
             print(f"{args.username} added successfully.")
-    # if args['list'] and len(args) == 1:
-    #     return list_all_users(connection)
-
+    elif args['list']:
+        list_all_users(connection)
 
 
 def main():
