@@ -11,14 +11,26 @@ def parse_args():
     parser.add_argument('-e', '--edit', help="Edit user's password.")
 
     args = parser.parse_args()
+    print(args)
     return args
+
+
+def create_user():
+    pass
+
+
+def process_args(args):
+    if args.username and args.password:
+        return create_user()
 
 
 def main():
 
     # parse args
     args = parse_args()
-    
+
+    # do something based on input provided in args
+    process_args(args)
 
 
 if __name__ == "__main__":
