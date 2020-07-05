@@ -29,17 +29,17 @@ class Message:
     def save_to_db(self, cursor):
         if self._id == -1:
             sql = """INSERT INTO Messages(from_id, to_id, text, creation_date)
-                            VALUES(%s, %s, %s) RETURNING id"""
-            values = (self.from_id, self.to_id, self.text, datetime.now().strftime("%Y-%m-%d %H:%M:%S:%f"))
+                            VALUES(%s, %s, %s, %s) RETURNING id"""
+            values = (self.from_id, self.to_id, self.text, str(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
             cursor.execute(sql, values)
             self._id = cursor.fetchone()[0]
             return True
-        else:
-            sql = """UPDATE Messages SET from_id=%s, to_id=%s, text=%s, creation_date=%s
-                           WHERE id=%s"""
-            values = (self.from_id, self.to_id, self.text, datetime.now().strftime("%Y-%m-%d %H:%M:%S:%f"), self.id)
-            cursor.execute(sql, values)
-            return True
+        # else:
+        #     sql = """UPDATE Messages SET from_id=%s, to_id=%s, text=%s, creation_date=%s
+        #                    WHERE id=%s"""
+        #     values = (self.from_id, self.to_id, self.text, datetime.now().strftime("%Y-%m-%d %H:%M:%S:%f"), self.id)
+        #     cursor.execute(sql, values)
+        #     return True
 
     @staticmethod
     def load_all_messages(cursor):

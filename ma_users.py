@@ -20,8 +20,6 @@ def parse_args():
 
 def connect_to_database():
     try:
-        # create a connection to create the database itself
-        print(f'Connecting to {DEFAULT_NEW_DBNAME}...')
         connection = connect(user=DEFAULT_USER, host=DEFAULT_HOST, password=DEFAULT_PWD, dbname=DEFAULT_NEW_DBNAME)
         connection.autocommit = True
     except Exception as e:
