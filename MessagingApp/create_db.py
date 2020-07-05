@@ -1,13 +1,6 @@
 from psycopg2 import connect
+from MessagingApp.database_defaults import DEFAULT_DBNAME, DEFAULT_HOST, DEFAULT_USER, DEFAULT_NEW_DBNAME, DEFAULT_PWD
 import argparse
-
-
-DEFAULT_HOST = 'localhost'
-DEFAULT_USER = 'postgres'
-DEFAULT_PWD = 'coderslab'
-DEFAULT_DBNAME = 'postgres'
-DEFAULT_NEW_DBNAME = "messaging_app_db"
-
 
 def parse_args():
     """
