@@ -79,9 +79,16 @@ def edit_user(connection, username, password, new_password):
         return user.save_to_db(cur)
 
 
-
 def delete_user(connection, username, password):
-    pass
+    if connection:
+        cur = connection.cursor()
+        user = User.load_user_by_username(cur, username)
+
+        if not check_password(password, user.hashed_password):
+            print("Wrong password.")
+            return False
+
+        return user.delete()
 
 
 def list_all_users(connection):
@@ -99,9 +106,10 @@ def process_args(args):
     if args['username'] and args['password'] and args['edit'] and args['new_pass'] and len(args) == 4:
         if edit_user(connection, args['username'], args['password'], args['new_pass']):
             print(f"{args['username']}'s password updated successfully.")
-    #
-    # if args['username'] and args['password'] and args['delete'] and len(args) == 3:
-    #     return delete_user(connection, args['username'], args['password'])
+
+    if args['username'] and args['password'] and args['delete'] and len(args) == 3:
+        if delete_user(connection, args['username'], args['password']):
+            print(f"{args['username']} deleted successfully.")
     #
     # if args['list'] and len(args) == 1:
     #     return list_all_users(connection)
