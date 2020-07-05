@@ -5,27 +5,17 @@ from MessagingApp.lib.clcrypto import check_password
 import argparse
 
 
-def get_not_none_args(args):
-    args_dict = vars(args)
-    not_none_args_dict = {}
-    for key in args_dict:
-        if args_dict[key]:
-            not_none_args_dict[key] = args_dict[key]
-    return not_none_args_dict
-
-
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('-u', '--username', help="Username for user that is to be created or modified.")
     parser.add_argument('-p', '--password', help="Password for user under username.")
     parser.add_argument('-n', '--new_pass', help="New password for user under username.")
     parser.add_argument('-l', '--list', help="List all users.")
-    parser.add_argument('-d', '--delete', help="Delete user under username.")
+    parser.add_argument('-d', '--delete', help="Delete user under username.", action="store_true")
     parser.add_argument('-e', '--edit', help="Edit user's password.", action="store_true")
 
     args = parser.parse_args()
-    not_none_args = get_not_none_args(args)
-    return not_none_args
+    return args
 
 
 def connect_to_database():
@@ -88,7 +78,7 @@ def delete_user(connection, username, password):
             print("Wrong password.")
             return False
 
-        return user.delete()
+        return user.delete(cur)
 
 
 def list_all_users(connection):
@@ -99,18 +89,15 @@ def process_args(args):
 
     connection = connect_to_database()
 
-    if args['username'] and args['password'] and len(args) == 2:
-        if create_user(connection, args['username'], args['password']):
-            print(f"{args['username']} added successfully.")
-
-    if args['username'] and args['password'] and args['edit'] and args['new_pass'] and len(args) == 4:
-        if edit_user(connection, args['username'], args['password'], args['new_pass']):
-            print(f"{args['username']}'s password updated successfully.")
-
-    if args['username'] and args['password'] and args['delete'] and len(args) == 3:
-        if delete_user(connection, args['username'], args['password']):
-            print(f"{args['username']} deleted successfully.")
-    #
+    if args.username and args.password and args.edit and args.new_pass:
+        if edit_user(connection, args.username, args.password, args.new_pass):
+            print(f"{args.username}'s password updated successfully.")
+    elif args.username and args.password and args.delete:
+        if delete_user(connection, args.username, args.password):
+            print(f"{args.username} deleted successfully.")
+    elif args.username and args.password:
+        if create_user(connection, args.username, args.password):
+            print(f"{args.username} added successfully.")
     # if args['list'] and len(args) == 1:
     #     return list_all_users(connection)
 
