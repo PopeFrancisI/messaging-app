@@ -26,6 +26,10 @@ class Message:
     def text(self):
         return self._text
 
+    @property
+    def creation_date(self):
+        return self._creation_date
+
     def save_to_db(self, cursor):
         if self._id == -1:
             sql = """INSERT INTO Messages(from_id, to_id, text, creation_date)
@@ -46,6 +50,20 @@ class Message:
         sql = "SELECT id, from_id, to_id, creation_date, text FROM Messages"
         messages = []
         cursor.execute(sql)
+        for row in cursor.fetchall():
+            id_, from_id_, to_id_, creation_date_, text_ = row
+            loaded_message = Message(from_id_, to_id_, text_)
+            loaded_message._id = id_
+            loaded_message._creation_date = creation_date_
+            messages.append(loaded_message)
+        return messages
+
+    @staticmethod
+    def load_all_messages(cursor, username):
+        sql = "SELECT id, from_id, to_id, creation_date, text FROM Messages WHERE from_id = %s OR to_id = %s"
+        vals = (username, )
+        messages = []
+        cursor.execute(sql, vals)
         for row in cursor.fetchall():
             id_, from_id_, to_id_, creation_date_, text_ = row
             loaded_message = Message(from_id_, to_id_, text_)
