@@ -109,7 +109,7 @@ def process_args(args):
     elif args.username and args.password:
         if create_user(connection, args.username, args.password):
             print(f"{args.username} added successfully.")
-    elif args['list']:
+    elif args.list:
         list_all_users(connection)
 
 
