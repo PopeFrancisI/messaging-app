@@ -59,11 +59,11 @@ class Message:
         return messages
 
     @staticmethod
-    def load_all_messages(cursor, username):
+    def load_all_messages(cursor, usr_id):
         sql = "SELECT id, from_id, to_id, creation_date, text FROM Messages WHERE from_id = %s OR to_id = %s"
-        vals = (username, )
+        values = (usr_id, usr_id)
+        cursor.execute(sql, values)
         messages = []
-        cursor.execute(sql, vals)
         for row in cursor.fetchall():
             id_, from_id_, to_id_, creation_date_, text_ = row
             loaded_message = Message(from_id_, to_id_, text_)
