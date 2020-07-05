@@ -30,7 +30,23 @@ def connect_to_database():
 
 
 def list_all_messages(connection, username, password):
-    pass
+    if connection:
+        cur = connection.cursor()
+        user = User.load_user_by_username(cur, username)
+
+        if not user:
+            print(f"User {username} (sender) does not exist! Failed to send the message.")
+            return False
+
+        if not check_password(password, user.hashed_password):
+            print("Wrong password.")
+            return False
+
+        messages = Message.load_all_messages_for_user_id(cur, user.id)
+        for msg in messages:
+            print(f"To {msg.to_id} at {msg.creation_date}: {msg.text}")
+
+        return True
 
 
 def send_message(connection, username, password, to, msg_text):
